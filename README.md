@@ -148,3 +148,8 @@ Voici ce que fait cette commande en détail :
 
 En résumé, cette commande utilise Scapy pour capturer 4 paquets ICMP sur l'interface réseau "eth0".
 
+### Python Scan de port
+
+Avec le script présent dans le répertoire celui-ci liste les ports ouvert
+
+
