@@ -153,3 +153,168 @@ En résumé, cette commande utilise Scapy pour capturer 4 paquets ICMP sur l'int
 Avec le script présent dans le répertoire celui-ci liste les ports ouvert
 
 
+### Script pour faire l'équivalent d'un NSLOOKUP
+
+```
+import socket
+
+ip_address = "10.108.239.251"
+try:
+    host_name = socket.gethostbyaddr(ip_address)[0]
+    print("Le nom de domaine associé à l'adresse IP", ip_address, "est:", host_name)
+except socket.herror:
+    print("Impossible de résoudre le nom de domaine pour l'adresse IP", ip_address)
+
+```
+
+### Get_ips_par_recherche_dns
+
+```
+import socket
+
+def get_ips_par_recherche_dns(cible, port=443):
+    """
+    Cette fonction utilise la fonction gethostbyname_ex du module socket pour obtenir
+    les adresses IP associées à un nom de domaine spécifié.
+
+    Arguments :
+    - cible : le nom de domaine à rechercher
+    - port (optionnel) : le port par défaut est 443
+
+    Retourne :
+    - Une liste contenant les adresses IP associées au nom de domaine, ou une liste vide si aucune adresse n'est trouvée.
+    """
+    try:
+        ips = socket.gethostbyname_ex(cible)[2]  # Obtient les adresses IP associées au nom de domaine
+        return ips
+    except socket.gaierror:
+        return []  # Retourne une liste vide si une erreur se produit lors de la recherche DNS
+
+# Exemple d'utilisation
+cible = "iut-acy.local"
+ips = get_ips_par_recherche_dns(cible)
+print(ips)
+
+
+```
+
+### Script pour lister chaque type de DNS
+```
+import dns.resolver
+
+# Importe le module dns.resolver pour résoudre les enregistrements DNS
+
+def resolve_dns_records(target):
+    # Définit les types d'enregistrements DNS à rechercher
+    record_types = ["A", "AAAA", "CNAME", "MX", "NS", "SOA", "TXT"]
+    # Initialise un dictionnaire vide pour stocker les résultats
+    results = {}
+
+    # Boucle sur chaque type d'enregistrement DNS
+    for record_type in record_types:
+        try:
+            # Tente de résoudre l'enregistrement DNS pour le type donné
+            answers = dns.resolver.resolve(target, record_type)
+            # Stocke les réponses dans le dictionnaire des résultats
+            results[record_type] = [str(rdata) for rdata in answers]
+        except dns.resolver.NoAnswer:
+            # Si aucune réponse n'est trouvée, stocke une liste vide dans les résultats
+            results[record_type] = []
+
+    # Retourne le dictionnaire des résultats
+    return results
+
+# Définit la cible pour laquelle résoudre les enregistrements DNS
+target = "iut-acy.local"
+
+# Appelle la fonction pour résoudre les enregistrements DNS pour la cible donnée
+results = resolve_dns_records(target)
+
+# Parcourt les résultats et affiche les enregistrements non vides
+for record_type, records in results.items():
+    if len(records) > 0:
+        print(f"{record_type} enregistrements pour {target}:")
+        for record in records:
+            print(record)
+        print()
+
+
+```
+### Analyse des fichiers Wireshark
+```
+from scapy.all import *
+paquets_captures = rdpcap('capture_meta_1.pcap')
+for paquet in paquets_captures:
+	print(paquet.summary())
+   #  ou
+	print(paquet.show())
+
+```
+Pour afficher
+- L’adresse IP Source
+- L’adresse IP Destination
+- Le flag TCP
+- Le port Source
+
+```
+
+
+# Importation de toutes les fonctionnalités de la bibliothèque Scapy
+from scapy.all import *
+
+# Définition d'une fonction pour analyser un fichier pcap
+def analyze_pcap(pcap_file):
+    # Lecture du fichier pcap et stockage des paquets dans une variable
+    packets = rdpcap(pcap_file)
+
+    # Parcours de chaque paquet dans la capture
+    for packet in packets:
+        # Vérification si le paquet contient une couche IP
+        if IP in packet:
+            # Extraction de l'adresse IP source et destination
+            ip_src = packet[IP].src
+            ip_dst = packet[IP].dst
+
+            # Vérification si le paquet contient une couche TCP
+            if TCP in packet:
+                # Extraction des indicateurs TCP (flags) et du port source
+                tcp_flags = packet[TCP].flags
+                tcp_sport = packet[TCP].sport
+
+                # Affichage des informations extraites
+                print("Adresse IP Source:", ip_src)
+                print("Adresse IP Destination:", ip_dst)
+                print("Flag TCP:", tcp_flags)
+                print("Port Source:", tcp_sport)
+                print()
+
+# Chemin vers le fichier pcap à analyser
+pcap_file = "capture_filtrage_1.pcap"
+
+# Appel de la fonction d'analyse du fichier pcap
+analyze_pcap(pcap_file)
+
+```
+### Analyse de trame
+# Importation de la bibliothèque pyshark, qui fournit une interface Python pour l'outil d'analyse réseau Wireshark.
+import pyshark
+
+# Création d'un objet FileCapture en spécifiant le chemin vers le fichier pcap ("trame_echo_1.pcap").
+capture = pyshark.FileCapture("trame_echo_1.pcap")
+
+# Création d'un dictionnaire vide pour stocker les informations des paquets TCP.
+dico_layer_tcp = {}
+
+# Initialisation d'une variable compteur.
+n = 0
+
+# Parcours de chaque paquet dans la capture.
+for pqt in capture:
+    # Stockage des informations de la couche TCP du paquet dans le dictionnaire en utilisant le compteur comme clé.
+    dico_layer_tcp[n] = pqt.tcp
+    # Incrémentation du compteur.
+    n += 1
+
+# Affichage des informations de la couche TCP du paquet à l'index 2 du dictionnaire.
+print(dico_layer_tcp[2])
+
