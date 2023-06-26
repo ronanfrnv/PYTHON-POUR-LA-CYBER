@@ -295,24 +295,24 @@ pcap_file = "capture_filtrage_1.pcap"
 analyze_pcap(pcap_file)
 
 ```
-### Analyse de trame
-# Importation de la bibliothèque pyshark, qui fournit une interface Python pour l'outil d'analyse réseau Wireshark.
+# Analyse de trame
+### Importation de la bibliothèque pyshark, qui fournit une interface Python pour l'outil d'analyse réseau Wireshark.
 import pyshark
 
-# Création d'un objet FileCapture en spécifiant le chemin vers le fichier pcap ("trame_echo_1.pcap").
+### Création d'un objet FileCapture en spécifiant le chemin vers le fichier pcap ("trame_echo_1.pcap").
 capture = pyshark.FileCapture("trame_echo_1.pcap")
 
-# Création d'un dictionnaire vide pour stocker les informations des paquets TCP.
+### Création d'un dictionnaire vide pour stocker les informations des paquets TCP.
 dico_layer_tcp = {}
 
-# Initialisation d'une variable compteur.
+### Initialisation d'une variable compteur.
 n = 0
 
-# Parcours de chaque paquet dans la capture.
+### Parcours de chaque paquet dans la capture.
 for pqt in capture:
-    # Stockage des informations de la couche TCP du paquet dans le dictionnaire en utilisant le compteur comme clé.
+    // Stockage des informations de la couche TCP du paquet dans le dictionnaire en utilisant le compteur comme clé.
     dico_layer_tcp[n] = pqt.tcp
-    # Incrémentation du compteur.
+    // Incrémentation du compteur.
     n += 1
 
 # Affichage des informations de la couche TCP du paquet à l'index 2 du dictionnaire.
