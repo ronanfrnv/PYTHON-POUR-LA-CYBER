@@ -257,8 +257,8 @@ Pour afficher
 - Le port Source
 
 ```
-
-
+### Affichage des détails d’un segment TCP
+```
 # Importation de toutes les fonctionnalités de la bibliothèque Scapy
 from scapy.all import *
 
@@ -318,3 +318,4 @@ for pqt in capture:
 # Affichage des informations de la couche TCP du paquet à l'index 2 du dictionnaire.
 print(dico_layer_tcp[2])
 
+```
